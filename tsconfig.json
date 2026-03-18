@@ -22,12 +22,17 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node",
+    "transpileOnly": true,
+    "loader": "ts-node/esm"
+  },
   "include": [
     "src/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "tests"
   ]
 }
