@@ -17,6 +17,14 @@ export class GameView implements IGameView {
         console.log(`${VIEWS_TEXT.WELCOME}`);
     }
 
+    async promptUser(): Promise<string> {
+        return new Promise((resolve) => {
+            this.rl.question('Ваш выбор: ', (answer: string) => {
+                resolve(answer.trim());
+            });
+        });
+    }
+
     close(): void {
         this.rl.close();
     }
