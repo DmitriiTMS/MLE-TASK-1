@@ -1,14 +1,11 @@
-import type { IGameState, IGameView } from "../models/interfaces.js";
+import type { ICommand, IGameState, IGameView } from "../models/interfaces.js";
 
 
 export class GameController {
-    private readonly gameView: IGameView;
-    private readonly gameState: IGameState;
-
-    constructor(gameState: IGameState, gameView: IGameView, ) {
-        this.gameView = gameView;
-        this.gameState = gameState;
-    }
+    constructor(
+        private gameState: IGameState,
+        private gameView: IGameView
+    ) {}
 
     async start(): Promise<void> {
         this.gameView.showWelcome();
@@ -17,25 +14,41 @@ export class GameController {
             await this.playTurn();
         }
 
-        const userInput = await this.gameView.promptUser();
+        if (this.gameState.gameResult) {
+            this.gameView.showGameResult(this.gameState.gameResult);
+        }
 
-        console.log(userInput);
-
-
-        // this.gameView.close();
+        this.gameView.close();
     }
 
     private async playTurn(): Promise<void> {
         const currentScene = this.gameState.currentScene;
-
-        // this.gameView.showSceneDescription(currentScene.description);
-
-        // const availableCommands = currentScene.getAvailableCommands();
-        // this.gameView.showAvailableCommands(availableCommands);
+        
+        this.gameView.showSceneDescription(currentScene.description);
+        
+        const availableCommands = currentScene.getAvailableCommands();
+        this.gameView.showAvailableCommands(availableCommands);
 
         const userInput = await this.gameView.promptUser();
-
-        // await this.processUserInput(userInput, availableCommands);
+        
+        await this.processUserInput(userInput, availableCommands);
     }
 
+    private async processUserInput(
+        input: string, 
+        availableCommands: Map<string, ICommand>
+    ): Promise<void> {
+        const command = availableCommands.get(input);
+
+        if (!command) {
+            this.gameView.showError('Неверный выбор. Пожалуйста, выберите доступное действие.');
+            return;
+        }
+
+        const nextScene = command.execute();
+        
+        if (!this.gameState.isGameOver) {
+            this.gameState.updateScene(nextScene);
+        }
+    }
 }

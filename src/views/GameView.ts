@@ -1,6 +1,5 @@
 import * as readline from 'node:readline';
-import type { IGameView } from '../models/interfaces.ts';
-import { VIEWS_TEXT } from './constants.js';
+import type { ICommand, IGameView } from '../models/interfaces.js';
 
 
 export class GameView implements IGameView {
@@ -14,7 +13,27 @@ export class GameView implements IGameView {
     }
 
     showWelcome(): void {
-        console.log(`${VIEWS_TEXT.WELCOME}`);
+        console.log('\n=== Добро пожаловать в текстовый квест "Таинственный лес" ===\n');
+    }
+
+    showSceneDescription(description: string): void {
+        console.log(`\n${description}\n`);
+    }
+
+    showAvailableCommands(commands: Map<string, ICommand>): void {
+        console.log('Доступные действия:');
+        commands.forEach((command, key) => {
+            console.log(`  ${key}. ${command.getName()}`);
+        });
+        console.log('');
+    }
+
+    showError(message: string): void {
+        console.log(`\n❌ Ошибка: ${message}\n`);
+    }
+
+    showGameResult(result: string): void {
+        console.log(`\n🎮 Игра окончена: ${result}\n`);
     }
 
     async promptUser(): Promise<string> {
@@ -28,5 +47,4 @@ export class GameView implements IGameView {
     close(): void {
         this.rl.close();
     }
-
 }
