@@ -5,7 +5,7 @@ export class GameController {
     constructor(
         private gameState: IGameState,
         private gameView: IGameView
-    ) {}
+    ) { }
 
     async start(): Promise<void> {
         this.gameView.showWelcome();
@@ -23,19 +23,19 @@ export class GameController {
 
     private async playTurn(): Promise<void> {
         const currentScene = this.gameState.currentScene;
-        
+
         this.gameView.showSceneDescription(currentScene.description);
-        
+
         const availableCommands = currentScene.getAvailableCommands();
         this.gameView.showAvailableCommands(availableCommands);
 
         const userInput = await this.gameView.promptUser();
-        
+
         await this.processUserInput(userInput, availableCommands);
     }
 
     private async processUserInput(
-        input: string, 
+        input: string,
         availableCommands: Map<string, ICommand>
     ): Promise<void> {
         const command = availableCommands.get(input);
@@ -46,9 +46,28 @@ export class GameController {
         }
 
         const nextScene = command.execute();
-        
+
         if (!this.gameState.isGameOver) {
             this.gameState.updateScene(nextScene);
         }
+    }
+
+    // Для тестов
+    async processCommand(commandKey: string): Promise<string> {
+        const currentScene = this.gameState.currentScene;
+        const availableCommands = currentScene.getAvailableCommands();
+        const command = availableCommands.get(commandKey);
+
+        if (!command) {
+            return 'error';
+        }
+
+        const nextScene = command.execute();
+
+        if (!this.gameState.isGameOver) {
+            this.gameState.updateScene(nextScene);
+        }
+
+        return nextScene.id;
     }
 }

@@ -6,3 +6,6 @@
 2. Установите зависимости: npm install
 3. Сделайте сборку проекта: npm run build
 4. Запустите проект: npm run start
+
+## Запуск тестов: npm run test
+
